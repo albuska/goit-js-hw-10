@@ -2,7 +2,7 @@ import './css/styles.css';
 // const debounce = require('lodash.debounce');
 import debounce from 'lodash.debounce';
 import Notiflix from 'notiflix';
-import { fetchCountries } from './fetchCountries'; 
+import { fetchCountries }  from './fetchCountries'; 
 
 
 const DEBOUNCE_DELAY = 300;
@@ -11,62 +11,58 @@ const inputRef = document.getElementById('search-box');
 const listRef = document.querySelector('.country-list');
 const containerRef = document.querySelector('.country-info');
 
-// inputRef.addEventListener('input', debounce(fetchCountries, DEBOUNCE_DELAY));
+inputRef.addEventListener('input', debounce(handleInputValue, DEBOUNCE_DELAY));
 
-inputRef.addEventListener('input', fetchCountries);
+if(inputRef === "") {
+    onClear(); 
+}
 
-// fetchCountries().then(countries => console.log(countries)).catch(onFetchError);
+function handleInputValue(event) {
+const inputValue = event.target.value.trim(); 
 
-// fetchCountries().then(name => console.log(name)) 
-// inputRef.addEventListener('input', handleInputValue); 
+if(inputValue.length === 1) {
+    Notiflix.Notify.info("Too many matches found. Please enter a more specific name.");
+} else  if(inputValue.length === 2) {
+    fetchCountries(inputValue).then(onRenderListCountries).catch(onFetchError);
+} else  if(inputValue.length >= 3) {
+    fetchCountries(inputValue).then(onRenderContainerOfCountry).catch(onFetchError);  
+} else if(inputValue === '') {
+    onClear();   
+    }
+}
 
-// function handleInputValue(event) {
-// const inputValue = event.target.value.trim(); 
-// console.log("🚀 ~ handleInputValue ~ inputValue", inputValue)
+function onRenderContainerOfCountry(countries) {
+const markup = countries.map(({name, capital, flag, population, languages}) => {
+    const nameLanguages = languages.map(language => language.name);
 
-// onFetchError(inputValue).then((countries) => console.log(countries)).catch(onFetchError);
-// }
+    return `<div><div class="container-title"><img src='${flag}' width="50" height="30"/><h1 class="title"><b>${name}</b></h1></div><p class="text"><b>Capital:</b> ${capital}</p>
+    <p class="text"><b>Population:</b> ${population}</p><p class="text"><b>Languages:</b> ${nameLanguages.join(", ")}</p></div>`
+}).join(""); 
+containerRef.insertAdjacentHTML('beforeend', markup);    
+    
+}
 
+function onRenderListCountries(countries) {
+const markup = countries.map(({flag, name}) => {
+    return `<li class="list container-text"><img src='${flag}' width="50" height="30"/><p class="text">${name}</p></li>`  
+}).join(""); 
+listRef.insertAdjacentHTML('beforeend', markup);  
 
-
-// if(a > 10) {
-//     Notiflix.Notify.warning("Too many matches found. Please enter a more specific name.");
-// }
-
-// if(a > 2 || a < 10) {
-//     Notiflix.Notify.warning("Too many matches found. Please enter a more specific name.");
-// }
-
-// if(a === 1) {
-
-// }
-
-
-// ******************************
-
-// if(b) {
-// // error 404
-// } else {
-//     
-// }
-
-
-
-// function onRenderContainerOfCountry(item) {
-// const markup = item.map(({name, capital, flags, population, languages}) => {
-//     return `<div><img src=${flags.svg}/><h1>${name}</h1><p>${capital}</p>
-//     <p>${population}</p><p>${languages}</p></div>`
-// }).join(""); 
-// containerRef.insertAdjacentHTML('beforeend', markup); 
-// }
-
-// function onRenderListCountries(item) {
-// const markup = item.map(({flags, name}) => {
-//     return `<li><img src=${flags.svg}/><p>${name}</p></li>`  
-// }).join(""); 
-// listRef.insertAdjacentHTML('beforeend', markup); 
-// }
+}
 
 function onFetchError() {
     Notiflix.Notify.failure("Oops, there is no country with that name");
+  }
+
+function onClear() {
+listRef.innerHTML = ""; 
+containerRef.innerHTML = ""; 
 }
+
+// function onClearList() { 
+// listRef.innerHTML = ""; 
+// }
+
+// function onClearContainer() {
+// containerRef.innerHTML = "";   
+// }
