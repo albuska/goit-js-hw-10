@@ -32,6 +32,7 @@ if(inputValue.length === 1) {
 }
 
 function onRenderContainerOfCountry(countries) {
+    onClear(); 
 const markup = countries.map(({name, capital, flag, population, languages}) => {
     const nameLanguages = languages.map(language => language.name);
 
@@ -43,6 +44,7 @@ containerRef.insertAdjacentHTML('beforeend', markup);
 }
 
 function onRenderListCountries(countries) {
+    onClear();
 const markup = countries.map(({flag, name}) => {
     return `<li class="list container-text"><img src='${flag}' width="50" height="30"/><p class="text">${name}</p></li>`  
 }).join(""); 
