@@ -1,5 +1,4 @@
 import './css/styles.css';
-// const debounce = require('lodash.debounce');
 import debounce from 'lodash.debounce';
 import Notiflix from 'notiflix';
 import { fetchCountries }  from './fetchCountries'; 
@@ -13,9 +12,6 @@ const containerRef = document.querySelector('.country-info');
 
 inputRef.addEventListener('input', debounce(handleInputValue, DEBOUNCE_DELAY));
 
-if(inputRef === "") {
-    onClear(); 
-}
 
 function handleInputValue(event) {
 const inputValue = event.target.value.trim(); 
@@ -26,7 +22,8 @@ if(inputValue.length === 1) {
     fetchCountries(inputValue).then(onRenderListCountries).catch(onFetchError);
 } else  if(inputValue.length >= 3) {
     fetchCountries(inputValue).then(onRenderContainerOfCountry).catch(onFetchError);  
-} else if(inputValue === '') {
+} 
+else if(inputValue === '') {
     onClear();   
     }
 }
@@ -60,11 +57,3 @@ function onClear() {
 listRef.innerHTML = ""; 
 containerRef.innerHTML = ""; 
 }
-
-// function onClearList() { 
-// listRef.innerHTML = ""; 
-// }
-
-// function onClearContainer() {
-// containerRef.innerHTML = "";   
-// }
